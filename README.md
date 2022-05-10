@@ -1,5 +1,5 @@
 
-# Python + JS: boilerplate
+# Python + JS: Speech Recognition APP
 
 This is a minimal boilerplate for a Python-based web-application, intended to be used for non production apps
 
