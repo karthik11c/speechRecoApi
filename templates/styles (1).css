@@ -1,0 +1,17 @@
+.center{
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+    padding: 1px;
+}
+
+.center1{
+    margin-left: auto;
+    margin-right: auto;
+    width: 15.5%;
+    padding: 2px;
+}
+
+.grid-container {
+    display: grid;
+}

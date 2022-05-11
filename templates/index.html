@@ -7,6 +7,51 @@
         <title>Flask app</title>
         <meta name="description" content="TheA Flask app">
         <meta name="author" content="anconam">
+        <style>
+                   .center{
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+    padding: 1px;
+}
+
+.center1{
+    margin-left: auto;
+    margin-right: auto;
+    width: 15%;
+    padding: 2px;
+}
+
+        div.slide-up {
+        height: 200px;
+        overflow: hidden;
+        }
+        
+        
+        
+        div.slide-up img {
+        animation: 4s slide-up;
+        margin-top: 0%;
+        }
+        
+        
+        
+        @keyframes slide-up {
+        from {
+        margin-top: 200%;
+        height: 300%;
+        }
+        to {
+        margin-top: 0%;
+        height: 500%;
+        }
+        }
+        </style>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+            <meta charset="utf-8">
+            <link rel="stylesheet" href="styles.css">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">       
     </head>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     <body>
@@ -18,17 +63,48 @@ Please enable your microphone.
 Please close any other tabs/windows containing speech API projects, even if only showing the preview window. 
 
 -->
+<div class="bg-image"
+style="background-image: url('https://mdbootstrap.com/img/Photos/Others/images/76.jpg');
+       height: 100vh;width:100vw;">
+<div class="center">
+   <h2 style="margin-top: 10%;">Beyond Stores</h2>
+</div>
+<div class="input-group w-50 p-3 col-md-8 mx-auto">
+   <input type="text" id="speechToText" class="form-control" style="font-size: larger;font-weight: 500;font-family: system-ui;">
+   <button class="btn btn-outline-secondary" type="button" onclick="record()"> <i class="material-icons">mic</i> </button>
+</div>
+<div id="noDataDiv"></div>
 
-<h1>Say Color:</h1>
+<div class="slide-up">
+   <div class="grid-container">
+       <div class="row align-items-start" id="gridDiv">
+         <!-- <div class="col">
+           <img src="pattern1.PNG" alt="Girl in a jacket" width="200" height="200">
+       </div>
+       <div class="col">
+           <img src="pattern 2.PNG" alt="Girl in a jacket" width="200" height="200">
+       </div>
+       <div class="col">
+           <img src="pattern 3.PNG" alt="Girl in a jacket" width="200" height="200">
+       </div>
+       <div class="col">
+           <img src="pattern 4.PNG" alt="Girl in a jacket" width="200" height="200">
+       </div> -->
+   </div>   
+</div>       
+</div>
 
-<div class="color-cube">
+</div>
+
+
+<!-- <div class="color-cube">
     <div class="cube-face cube-front"></div>
     <div class="cube-face cube-back"></div>
     <div class="cube-face cube-bottom"></div>
     <div class="cube-face cube-top"></div>
     <div class="cube-face cube-left"></div>
     <div class="cube-face cube-right"></div>
-</div>
+</div> -->
 
 <p class="color-name">orange</p>
 
@@ -41,14 +117,16 @@ Please close any other tabs/windows containing speech API projects, even if only
 
     <script type="text/javascript" >
 	  //DOM load event
-window.addEventListener("DOMContentLoaded",	() => {
+
+//window.addEventListener("DOMContentLoaded",	() => {
 
     //Check that page is not running in a CodePen preview iframe
 
     //Set speech recognition
-    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    //window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+    var recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-IN";
 
-    const recognition = new SpeechRecognition();
           // colorName = document.querySelector('.color-name'),
           // colorCube = document.querySelector('.color-cube'),
           // heardOutput = document.querySelector('.heard-output'),
@@ -59,10 +137,11 @@ window.addEventListener("DOMContentLoaded",	() => {
     recognition.start();
 
     //Listen for when the user finishes talking
-    recognition.addEventListener('result', e => {
-
+    recognition.onresult = function(e){
+        // recognition.continuous = false;
+        // recognition.interimResults = false;
         //Get transcript of user speech & confidence percentage
-        const transcript = e.results[0][0].transcript.toLowerCase().replace(/\s/g, ''),
+        const transcript = e.results[0][0].transcript,
               confidence = (e.results[0][0].confidence * 100).toFixed(1);
 
         //Check if transcript is valid color value
@@ -78,7 +157,7 @@ window.addEventListener("DOMContentLoaded",	() => {
 
             //Set color name text value
             colorName.textContent = transcript;
-
+            document.getElementById("speechToText").value = transcript;            
         //}
 
         //Output transcript
@@ -93,16 +172,36 @@ window.addEventListener("DOMContentLoaded",	() => {
             async: false,
             data: {rawText: transcript}
         });
-
         console.log("responseText: "+jqXHR.responseText);
-    });
+        var list=jqXHR.responseText;
+var x,queryString="";
+console.log("list:"+list.length);
+ if( list != undefined && list.length){
+       
+       x = JSON.parse(list);
+       console.log("hdshfdsfdfg")
+       $('#gridDiv').empty();
+       $('#noDataDiv').empty();
+       
+       if(x.length<=0)
+       $('#noDataDiv').append('No Results Found!!');
+       
+        for( i=0; i<x.length;i++){
+            queryString += "<div class='col'>"+
+           "<img src='../static/wallpapers/"+x[i]+".png' alt='Image Result' width='200' height='200' />"+
+          "</div></div>";
+        }
+        $('#gridDiv').append(queryString);
+ }
+ else{
+     console.log("no data found")
+    // $('#gridDiv').append('<p>No Results Found!!</p>');
+ }
 
     //Restart speech recognition after user has finished talking
-    recognition.addEventListener('end', recognition.start);    
-});
-	
+    recognition.addEventListener('end', recognition.start);
+}
+//});
   </script>
   <script src="{{ url_for('static', filename='jquery-3.6.0.min.js') }}"></script>
 </html>
-
-<a class="colors-list" href="https://htmlcolorcodes.com/color-names/#names" target="_blank">List of colors</a>

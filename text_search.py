@@ -153,7 +153,7 @@ def load_clean_descriptions(filename, dataset):
     return descriptions
 
 #user_description = 'yellow white wallpaper'
-user_description = $_POST['name']; #'Please show me a list of yellow texture wallpaper' #user input in text 
+user_description = 'Please show me a list of red texture wallpaper' #user input in text 
 user_description = user_description.lower()
 
 table = str.maketrans('','',string.punctuation)

@@ -6,6 +6,7 @@ nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.translate.bleu_score import corpus_bleu
+from collections import Counter
 
 #import pandas as pd
 #import numpy as np
@@ -21,7 +22,6 @@ def hello_world():
     You probably do NOT want to modify this.
     """
     return render_template('index.html')
-
 
 @app.after_request
 def add_header(r):
@@ -52,11 +52,6 @@ def add_header(r):
 @app.route('/process',methods=['GET', 'POST'])
 def get_results():
     transcript_text = request.args.get('rawText')
-    print('below data check bro: ')
-    print(request.args.get('rawText'))
-    print('brlow length check man:: ')
-    print(len(request.args.get('rawText')))
-    print(request.args)
     all_stopwords = stopwords.words('english')
     all_stopwords.append('show')
     all_stopwords.append('want')
@@ -93,7 +88,7 @@ def get_results():
                 mapping[image_id] = list()
             mapping[image_id].append(image_desc)
         return mapping
-    
+
     #Cleaning description -- convert to lowercase, remove punctuation, remove words less than some len, remove words with number
     def clean_description(description):
         #remove punctuation -- make translation table
@@ -124,17 +119,12 @@ def get_results():
         data = ('\n').join(lines)
         file = open(filename,'w')
         file.write(data)
-        file.close()
-        
-    # convert the loaded descriptions into a vocabulary of words
-    #def to_vocabulary(descriptions):
-        # build a list of all description strings
-        #all_desc = set()
-        #for key in descriptions.keys():
-            #[all_desc.update(d.split()) for d in descriptions[key]]
-        #return all_desc
-    
-    path = 'C:\\Users\\Karthik\\Downloads\\idm crack\\wallpapers-20220510T124921Z-001\\wallpapers\\'
+        file.close()    
+
+    #path = '\static\wallpapers\'
+    import os
+    rootpath = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(rootpath, 'static/wallpapers/')
     doc = load_text(path + 'descriptions.txt')
     
     # parse descriptions
@@ -159,7 +149,7 @@ def get_results():
         return text
     
     #Image Identifier --- TrainImage.txt
-        #2513260012_03d33305cf.jpg
+        #2513260012_03d33305cf.png
     def load_set(filename):
         doc = load_doc(filename)
         dataset = list()
@@ -191,7 +181,7 @@ def get_results():
         return descriptions
     
     #user_description = 'yellow white wallpaper'
-    user_description = transcript_text #'Please show me a list of yellow texture wallpaper' #user input in text 
+    user_description = transcript_text#'Please show me a list of red texture wallpaper' #user input in text 
     user_description = user_description.lower()
     
     table = str.maketrans('','',string.punctuation)
@@ -218,16 +208,13 @@ def get_results():
     score = []
     img_id =[]
     Z= []
-    
-    #code to search text to image based on dictionary
-    from collections import Counter
-    
+        
     words_list = user_description.split() # user descrip  
     
     word_freq = {}
     
     for k,v in test_descriptions.items():
-        word_freq[k] = ''.join(v).split()
+      word_freq[k] = ''.join(v).split()
     
     #print(test_descriptions)  
     print(word_freq)
@@ -235,15 +222,13 @@ def get_results():
     
     keys = []
     for x in words_list:
-        list_of_keys  = [key for key, list_of_values in word_freq.items() if x in list_of_values]
+      list_of_keys  = [key for key, list_of_values in word_freq.items() if x in list_of_values]
     
-    if list_of_keys:
+      if list_of_keys:
         keys.extend(list_of_keys)
-    else:
+      else:
         print("Value does not exist in the dictionary")
-        
-    #keys = ["w1", "w2", "w2", "w5", "w1", "w2", "w3", "w4", "w5"]
-    #print(keys) 
+
     def most_frequent(keys):
         occurence_count = Counter(keys)
         return occurence_count.most_common(3)
@@ -255,7 +240,7 @@ def get_results():
     image_names = []
     
     for i in key_freq:
-        image_names.append(i[0])
+      image_names.append(i[0])
     
     print(image_names)
     
@@ -263,7 +248,7 @@ def get_results():
     import glob
     import os
     
-    dir = path + 'output_images\\'
+    dir = path + 'output_images/'
     
     filelist = glob.glob(os.path.join(dir, "*"))
     print(filelist)
@@ -273,17 +258,17 @@ def get_results():
     
     i=0
     for img in image_names:
-        img_path = path + img + '.jpg'
+        img_path = path + img + '.png'
         i += 1
         #matched_img_file.write(descriptions[img][0]+ '\\n')
-        copyfile(img_path, path + '\\output_images' + '\\' + img + '.jpg')
-        
-    #matching   
-    print('response sending to client:')
+        copyfile(img_path, path + 'output_images/' + img + '.png')    
+        print(path + 'output_images/' + img + '.png')
+
     print(image_names)
     if not image_names:
-        return 'No Results Found!!'
+        return jsonify([])
     return jsonify(image_names)
+    #return render_template("index.html", link=image_names)
 
 if __name__ == '__main__':
     app.run(debug=True)
